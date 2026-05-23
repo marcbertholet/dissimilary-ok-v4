@@ -1,0 +1,8 @@
+[general]
+name=Segregation Indices
+description=Calcul des indices de dissimilarité entre groupes de population
+version=1.0
+qgisMinimumVersion=3.22
+author=Marc
+email=
+about=Plugin pour calculer des indices de dissimilarité à partir de champs de nationalités.
