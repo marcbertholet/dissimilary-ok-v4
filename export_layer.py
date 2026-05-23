@@ -30,6 +30,16 @@ def create_temporary_layer(source_layer, features, ref_name, other_name, contrib
         geom_type = source_layer.wkbType()
         crs = source_layer.crs()
         
+        # Déterminer le type de géométrie approprié AVANT de créer la couche
+        if geom_type == 1:  # Point
+            geom_string = "Point"
+        elif geom_type == 2:  # LineString
+            geom_string = "LineString"
+        elif geom_type == 3:  # Polygon
+            geom_string = "Polygon"
+        else:
+            geom_string = "Point"
+        
         # Créer les champs
         fields = QgsFields()
         
@@ -41,22 +51,13 @@ def create_temporary_layer(source_layer, features, ref_name, other_name, contrib
         fields.append(QgsField("local_dissimilarity", QVariant.Double))
         fields.append(QgsField(f"contrib_pct", QVariant.Double))
         
-        # Créer la couche mémoire
+        # Créer la couche mémoire avec le bon type de géométrie
         layer_name = f"dissimilarity_{ref_name}_vs_{other_name}"
         mem_layer = QgsVectorLayer(
-            f"Point?crs={crs.authid()}",
+            f"{geom_string}?crs={crs.authid()}",
             layer_name,
             "memory"
         )
-        
-        if geom_type == 1:  # Point
-            mem_layer = QgsVectorLayer(f"Point?crs={crs.authid()}", layer_name, "memory")
-        elif geom_type == 2:  # LineString
-            mem_layer = QgsVectorLayer(f"LineString?crs={crs.authid()}", layer_name, "memory")
-        elif geom_type == 3:  # Polygon
-            mem_layer = QgsVectorLayer(f"Polygon?crs={crs.authid()}", layer_name, "memory")
-        else:
-            mem_layer = QgsVectorLayer(f"Point?crs={crs.authid()}", layer_name, "memory")
         
         mem_layer.setCrs(crs)
         
@@ -99,6 +100,8 @@ def create_temporary_layer(source_layer, features, ref_name, other_name, contrib
         
     except Exception as e:
         print(f"Erreur lors de la création de la couche temporaire: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return None
 
 
