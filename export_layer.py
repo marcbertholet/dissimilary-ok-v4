@@ -4,7 +4,8 @@ from qgis.core import (
     QgsFeature,
     QgsProject,
     QgsFields,
-    QgsVectorFileWriter
+    QgsVectorFileWriter,
+    QgsWkbTypes
 )
 from qgis.PyQt.QtCore import QVariant
 import os
@@ -31,14 +32,14 @@ def create_temporary_layer(source_layer, features, ref_name, other_name, contrib
         crs = source_layer.crs()
         
         # Déterminer le type de géométrie approprié AVANT de créer la couche
-        if geom_type == 1:  # Point
-            geom_string = "Point"
-        elif geom_type == 2:  # LineString
-            geom_string = "LineString"
-        elif geom_type == 3:  # Polygon
-            geom_string = "Polygon"
+        # Utiliser QgsWkbTypes pour gérer correctement les types de géométrie
+        if QgsWkbTypes.hasZ(geom_type) or QgsWkbTypes.hasM(geom_type):
+            base_type = QgsWkbTypes.flatType(geom_type)
         else:
-            geom_string = "Point"
+            base_type = geom_type
+        
+        geom_type_name = QgsWkbTypes.displayString(base_type)
+        geom_string = geom_type_name
         
         # Créer les champs
         fields = QgsFields()
