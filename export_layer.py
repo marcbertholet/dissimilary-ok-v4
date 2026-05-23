@@ -3,9 +3,10 @@ from qgis.core import (
     QgsField,
     QgsFeature,
     QgsProject,
-    QgsFields
+    QgsFields,
+    QgsVectorFileWriter
 )
-from PyQt5.QtCore import QVariant
+from qgis.PyQt.QtCore import QVariant
 import os
 
 
@@ -96,10 +97,3 @@ def export_dissimilarity_to_geopackage(source_layer, features, ref_name, other_n
     except Exception as e:
         print(f"Erreur lors de l'export GeoPackage: {str(e)}")
         return False
-
-
-# Import pour la classe QgsVectorFileWriter
-try:
-    from qgis.core import QgsVectorFileWriter
-except:
-    from qgis.core import QgsVectorFileWriter
